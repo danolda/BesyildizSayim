@@ -1,6 +1,5 @@
-// NİHAİ SCRIPT.JS KODU
+// NİHAİ SCRIPT.JS KODU (ALFABETİK SIRALAMALI)
 
-// Adım 1: Firebase Yapılandırmanız (Değiştirmeyin)
 const firebaseConfig = {
     apiKey: "AIzaSyCy2-UOqSLgt6HJYIHCY49cP9zLGcWFePs",
     authDomain: "besyildizsayim.firebaseapp.com",
@@ -10,11 +9,9 @@ const firebaseConfig = {
     appId: "1:917664754525:web:9fc8bb5ec68457d3cdd6b4"
 };
 
-// Adım 2: Firebase'i Başlat
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// PWA için Service Worker'ı kaydet
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -23,7 +20,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// HTML elementlerini seçelim
 const girisKutusu = document.getElementById('kullanici-giris-kutusu');
 const sayimAlani = document.getElementById('sayim-alani');
 const sayimaBaslaBtn = document.getElementById('sayima-basla-btn');
@@ -67,17 +63,24 @@ urunEkleForm.addEventListener('submit', (e) => {
     });
 });
 
-// Veritabanını dinle ve tabloyu oluştur
-db.collection('sayim-urunleri').orderBy('zaman', 'desc')
+// Veritabanını dinle ve Türkçe Alfabetik Kurallara göre sıralayarak tabloyu oluştur
+db.collection('sayim-urunleri')
   .onSnapshot(snapshot => {
-      urunTablosuBody.innerHTML = '';
+      const urunler = [];
       snapshot.forEach(doc => {
-          const veri = doc.data();
+          urunler.push(doc.data());
+      });
+
+      urunler.sort((a, b) => {
+          return a.ad.toLocaleLowerCase('tr').localeCompare(b.ad.toLocaleLowerCase('tr'), 'tr');
+      });
+
+      urunTablosuBody.innerHTML = '';
+      
+      urunler.forEach(veri => {
           const tr = document.createElement('tr');
           const zamanStr = veri.zaman ? veri.zaman.toDate().toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '...';
           
-          // *** SORUNUN ÇÖZÜMÜ OLAN SATIRLAR BURASI ***
-          // Miktar ve Birim'i birleştiriyoruz.
           tr.innerHTML = `
               <td data-label="Ürün">${veri.ad}</td>
               <td data-label="Miktar">${veri.miktar} ${veri.birim}</td>
@@ -86,11 +89,11 @@ db.collection('sayim-urunleri').orderBy('zaman', 'desc')
           `;
           urunTablosuBody.appendChild(tr);
       });
+
   }, error => {
       console.error("Veri dinleme hatası: ", error);
   });
 
-// ŞİFRE KORUMALI Veri Sıfırlama Fonksiyonu
 resetButton.addEventListener('click', () => {
     const dogruSifre = 'Besyildiz5'; 
     const girilenSifre = prompt("TÜM verileri silmek için lütfen yönetici şifresini girin:");
