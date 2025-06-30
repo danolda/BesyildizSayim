@@ -1,12 +1,12 @@
 :root {
-    --primary-color: #007bff;
+    --primary-color: #0d6efd;
     --secondary-color: #2a3a4a;
-    --background-color: #f4f7f9;
+    --background-color: #f8f9fa;
     --card-background: #ffffff;
-    --text-color: #333;
-    --text-light: #f1f1f1;
+    --text-color: #212529;
+    --text-light: #ffffff;
     --danger-color: #dc3545;
-    --border-color: #e1e4e8;
+    --border-color: #dee2e6;
     --font-family: 'Poppins', sans-serif;
 }
 
@@ -24,7 +24,7 @@ body {
 }
 
 #app-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 20px auto;
     padding: 15px;
 }
@@ -43,21 +43,26 @@ h2 {
     text-align: center;
     margin-bottom: 1.5rem;
     color: var(--secondary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
 }
 
 .card {
     background-color: var(--card-background);
     border-radius: 8px;
     padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
 }
 
 .gizli {
     display: none;
 }
 
-input[type="text"], input[type="number"], select {
+input[type="text"],
+input[type="number"],
+select {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border-color);
@@ -65,14 +70,13 @@ input[type="text"], input[type="number"], select {
     font-size: 1rem;
     font-family: var(--font-family);
     margin-bottom: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-select {
-    appearance: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: .65em auto;
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
 }
 
 .form-row {
@@ -86,7 +90,8 @@ select {
     flex: 1;
 }
 
-.button-primary, .button-danger {
+.button-primary,
+.button-danger {
     display: block;
     width: 100%;
     padding: 12px;
@@ -97,96 +102,65 @@ select {
     color: var(--text-light);
     cursor: pointer;
     transition: background-color 0.2s;
+    text-align: center;
 }
 
 .button-primary {
     background-color: var(--primary-color);
 }
 .button-primary:hover {
-    background-color: #0056b3;
+    background-color: #0b5ed7;
 }
 
 .button-danger {
     background-color: var(--danger-color);
 }
 .button-danger:hover {
-    background-color: #c82333;
+    background-color: #bb2d3b;
 }
 
 #danger-zone {
-    border: 2px solid var(--danger-color);
+    border-color: var(--danger-color);
 }
 
 .table-wrapper {
-    overflow-x: auto;
+    overflow-x: auto; /* Telefonlarda tablo taşarsa yana kaydırır */
 }
 
+/* YENİ VE GELİŞTİRİLMİŞ TABLO STİLLERİ */
 table {
     width: 100%;
     border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap; /* Satırların aşağı kaymasını engelle */
 }
 
 th, td {
     padding: 12px 15px;
-    text-align: left;
     border-bottom: 1px solid var(--border-color);
 }
 
 thead th {
-    background-color: #f8f9fa;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
     font-weight: 600;
+    position: sticky;
+    top: 0;
 }
 
-tbody tr:last-child td {
-    border-bottom: none;
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Her çift satırı farklı renkte yap */
 }
 
 tbody tr:hover {
-    background-color: #f1f3f5;
+    background-color: #e9ecef; /* Fare üzerine gelince satırı vurgula */
 }
 
-/* Mobil Cihazlar için Özel Stiller */
-@media (max-width: 600px) {
-    #app-container {
-        padding: 5px;
-        margin: 0;
-    }
-    .card {
-        padding: 15px;
-    }
-    .form-row {
-        flex-direction: column;
-    }
-    
-    /* Tabloyu mobil için kart görünümüne çevir */
-    thead {
-        display: none;
-    }
-    tr {
-        display: block;
-        margin-bottom: 15px;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-    }
-    td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        border-bottom: 1px dashed var(--border-color);
-    }
-    td:last-child {
-        border-bottom: none;
-    }
-    td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        margin-right: 10px;
-        color: var(--primary-color);
-    }
-    td[data-label="Miktar"]::after {
-        content: " " attr(data-unit);
-        font-weight: normal;
-        color: #666;
+/* Telefonlar için özel ayarlar (önceki kodda vardı, burada da koruyoruz) */
+@media (max-width: 768px) {
+    th:nth-child(3), td:nth-child(3), /* 'Sayan' sütununu küçük ekranda gizle */
+    th:nth-child(4), td:nth-child(4)  /* 'Zaman' sütununu küçük ekranda gizle */
+    { 
+        /* Gerekirse display: none; yapılabilir ama şimdilik kalsın */
     }
 }
