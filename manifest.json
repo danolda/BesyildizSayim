@@ -8,12 +8,12 @@
   "description": "Online, gerçek zamanlı market sayım uygulaması.",
   "icons": [
     {
-      "src": "images/icon-192x192.png",
+      "src": "images/icon-192x192.png",  // <-- BU YOLUN DOĞRU OLDUĞUNDAN EMİN OLUN
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "images/icon-512x512.png",
+      "src": "images/icon-512x512.png",  // <-- BU YOLUN DOĞRU OLDUĞUNDAN EMİN OLUN
       "sizes": "512x512",
       "type": "image/png"
     }
