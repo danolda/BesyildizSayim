@@ -1,14 +1,15 @@
-// Adım 1: Firebase Yapılandırma Bilgilerinizi Buraya Yapıştırın
+// Adım 1: Firebase'den aldığınız KENDİ yapılandırma kodunuzu buraya yapıştırın.
+// Sizin sağladığınız koddan aldım:
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "proje-adi.firebaseapp.com",
-  projectId: "proje-adi",
-  storageBucket: "proje-adi.appspot.com",
-  messagingSenderId: "...",
-  appId: "1:..."
+    apiKey: "AIzaSyCy2-UOqSLgt6HJYIHCY49cP9zLGcWFePs",
+    authDomain: "besyildizsayim.firebaseapp.com",
+    projectId: "besyildizsayim",
+    storageBucket: "besyildizsayim.appspot.com",
+    messagingSenderId: "917664754525",
+    appId: "1:917664754525:web:9fc8bb5ec68457d3cdd6b4"
 };
 
-// Adım 2: Firebase'i Başlat
+// Adım 2: Firebase'i Başlat (compat sürümü)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore(); // Firestore veritabanını kullanıyoruz
 
@@ -41,19 +42,24 @@ sayimaBaslaBtn.addEventListener('click', () => {
 urunEkleForm.addEventListener('submit', (e) => {
     e.preventDefault(); // Sayfanın yenilenmesini engelle
     
-    const urunAdi = document.getElementById('urun-adi').value;
-    const urunBirimi = document.getElementById('urun-birimi').value;
-    const urunMiktari = document.getElementById('urun-miktari').value;
+    const urunAdiInput = document.getElementById('urun-adi');
+    const urunBirimiInput = document.getElementById('urun-birimi');
+    const urunMiktariInput = document.getElementById('urun-miktari');
 
     db.collection('sayim-urunleri').add({
-        ad: urunAdi,
-        birim: urunBirimi,
-        miktar: Number(urunMiktari),
+        ad: urunAdiInput.value,
+        birim: urunBirimiInput.value,
+        miktar: Number(urunMiktariInput.value),
         sayan: sayimYapanKisi,
         zaman: firebase.firestore.FieldValue.serverTimestamp() // Ekleme zamanını otomatik ekle
+    }).then(() => {
+        console.log("Veri başarıyla eklendi!");
+        urunEkleForm.reset(); // Formu sadece başarılı olursa temizle
+        urunAdiInput.focus(); // Yeni ürün girişi için imleci geri getir
+    }).catch((error) => {
+        console.error("Veri eklenirken hata oluştu: ", error);
+        alert("Bir hata oluştu, veri eklenemedi. İnternet bağlantınızı kontrol edin.");
     });
-    
-    urunEkleForm.reset(); // Formu temizle
 });
 
 // Adım 5: Firebase'deki verileri ANLIK OLARAK dinle ve tabloya yaz
@@ -63,13 +69,17 @@ db.collection('sayim-urunleri').orderBy('zaman', 'desc') // En son eklenen en ü
       snapshot.forEach(doc => {
           const veri = doc.data();
           const tr = document.createElement('tr');
+          const zamanStr = veri.zaman ? veri.zaman.toDate().toLocaleString('tr-TR') : 'Bekleniyor...';
           tr.innerHTML = `
               <td>${veri.ad}</td>
               <td>${veri.miktar}</td>
               <td>${veri.birim}</td>
               <td>${veri.sayan}</td>
-              <td>${veri.zaman ? veri.zaman.toDate().toLocaleTimeString('tr-TR') : ''}</td>
+              <td>${zamanStr}</td>
           `;
           urunTablosuBody.appendChild(tr);
       });
+  }, error => {
+      console.error("Veri dinlenirken hata oluştu: ", error);
+      alert("Veritabanı bağlantısında bir sorun var. Sayfayı yenileyin.");
   });
