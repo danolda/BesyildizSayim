@@ -1,5 +1,4 @@
-// Adım 1: Firebase'den aldığınız KENDİ yapılandırma kodunuzu buraya yapıştırın.
-// Sizin sağladığınız koddan aldım:
+// Adım 1: Firebase Yapılandırmanız (Değiştirmeyin)
 const firebaseConfig = {
     apiKey: "AIzaSyCy2-UOqSLgt6HJYIHCY49cP9zLGcWFePs",
     authDomain: "besyildizsayim.firebaseapp.com",
@@ -9,9 +8,18 @@ const firebaseConfig = {
     appId: "1:917664754525:web:9fc8bb5ec68457d3cdd6b4"
 };
 
-// Adım 2: Firebase'i Başlat (compat sürümü)
+// Adım 2: Firebase'i Başlat
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(); // Firestore veritabanını kullanıyoruz
+const db = firebase.firestore();
+
+// Adım 3: PWA için Service Worker'ı kaydet
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('Service Worker registered!'))
+            .catch(err => console.log('Service Worker registration failed: ', err));
+    });
+}
 
 // HTML elementlerini seçelim
 const girisKutusu = document.getElementById('kullanici-giris-kutusu');
@@ -21,27 +29,23 @@ const sayimYapanInput = document.getElementById('sayim-yapan-input');
 const aktifKullaniciAdi = document.getElementById('aktif-kullanici-adi');
 const urunEkleForm = document.getElementById('urun-ekle-form');
 const urunTablosuBody = document.querySelector("#urun-tablosu tbody");
+const resetButton = document.getElementById('reset-data-btn');
 
 let sayimYapanKisi = '';
 
-// Adım 3: Kullanıcı adını alıp sayım ekranını göster
 sayimaBaslaBtn.addEventListener('click', () => {
     sayimYapanKisi = sayimYapanInput.value.trim();
     if (sayimYapanKisi === '') {
         alert('Lütfen adınızı giriniz!');
         return;
     }
-    
-    // Giriş kutusunu gizle, sayım alanını göster
     girisKutusu.classList.add('gizli');
     sayimAlani.classList.remove('gizli');
     aktifKullaniciAdi.textContent = sayimYapanKisi;
 });
 
-// Adım 4: Form gönderildiğinde veriyi Firebase'e yaz
 urunEkleForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // Sayfanın yenilenmesini engelle
-    
+    e.preventDefault();
     const urunAdiInput = document.getElementById('urun-adi');
     const urunBirimiInput = document.getElementById('urun-birimi');
     const urunMiktariInput = document.getElementById('urun-miktari');
@@ -51,35 +55,57 @@ urunEkleForm.addEventListener('submit', (e) => {
         birim: urunBirimiInput.value,
         miktar: Number(urunMiktariInput.value),
         sayan: sayimYapanKisi,
-        zaman: firebase.firestore.FieldValue.serverTimestamp() // Ekleme zamanını otomatik ekle
+        zaman: firebase.firestore.FieldValue.serverTimestamp()
     }).then(() => {
-        console.log("Veri başarıyla eklendi!");
-        urunEkleForm.reset(); // Formu sadece başarılı olursa temizle
-        urunAdiInput.focus(); // Yeni ürün girişi için imleci geri getir
+        urunEkleForm.reset();
+        urunAdiInput.focus();
     }).catch((error) => {
-        console.error("Veri eklenirken hata oluştu: ", error);
-        alert("Bir hata oluştu, veri eklenemedi. İnternet bağlantınızı kontrol edin.");
+        console.error("Hata: ", error);
+        alert("Veri eklenemedi.");
     });
 });
 
-// Adım 5: Firebase'deki verileri ANLIK OLARAK dinle ve tabloya yaz
-db.collection('sayim-urunleri').orderBy('zaman', 'desc') // En son eklenen en üstte görünsün
+db.collection('sayim-urunleri').orderBy('zaman', 'desc')
   .onSnapshot(snapshot => {
-      urunTablosuBody.innerHTML = ''; // Her güncellemede tabloyu temizle
+      urunTablosuBody.innerHTML = '';
       snapshot.forEach(doc => {
           const veri = doc.data();
           const tr = document.createElement('tr');
-          const zamanStr = veri.zaman ? veri.zaman.toDate().toLocaleString('tr-TR') : 'Bekleniyor...';
+          const zamanStr = veri.zaman ? veri.zaman.toDate().toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '...';
+          
+          // Mobil uyumlu tablo için data-label'lar ekliyoruz
           tr.innerHTML = `
-              <td>${veri.ad}</td>
-              <td>${veri.miktar}</td>
-              <td>${veri.birim}</td>
-              <td>${veri.sayan}</td>
-              <td>${zamanStr}</td>
+              <td data-label="Ürün">${veri.ad}</td>
+              <td data-label="Miktar" data-unit="${veri.birim}">${veri.miktar}</td>
+              <td data-label="Sayan">${veri.sayan}</td>
+              <td data-label="Zaman">${zamanStr}</td>
           `;
           urunTablosuBody.appendChild(tr);
       });
   }, error => {
-      console.error("Veri dinlenirken hata oluştu: ", error);
-      alert("Veritabanı bağlantısında bir sorun var. Sayfayı yenileyin.");
+      console.error("Veri dinleme hatası: ", error);
   });
+
+// YENİ: Veri Sıfırlama Fonksiyonu
+resetButton.addEventListener('click', () => {
+    const confirmation = prompt("TÜM verileri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz. Onaylamak için 'SİL' yazın.");
+    if (confirmation === 'SİL') {
+        alert('Veriler siliniyor...');
+        const collectionRef = db.collection('sayim-urunleri');
+        
+        collectionRef.get().then(snapshot => {
+            const batch = db.batch();
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            return batch.commit();
+        }).then(() => {
+            alert('Tüm veriler başarıyla silindi.');
+        }).catch(error => {
+            console.error('Silme işlemi sırasında hata: ', error);
+            alert('Bir hata oluştu. Lütfen Firestore güvenlik kurallarınızı kontrol edin. Silme işlemine izin vermeniz gerekebilir.');
+        });
+    } else {
+        alert('İşlem iptal edildi.');
+    }
+});
