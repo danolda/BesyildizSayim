@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- DEĞİŞİKLİK BURADA -->
     <title>Online Sayım Sistemi</title>
     
     <!-- PWA için Gerekli Ayarlar -->
@@ -22,7 +22,7 @@
         <!-- Sayım Yapan Kişinin Adını Girmesi İçin Kutu -->
         <div id="kullanici-giris-kutusu" class="card">
             <h2>Sayıma Başla</h2>
-            <p>Sayıma başlamadan önce adınızı girin.</p>
+            <p>Sayıma başlamadan önce adınızı veya takımınızı girin.</p>
             <input type="text" id="sayim-yapan-input" placeholder="Adınız (Örn: Emre K.)">
             <button id="sayima-basla-btn" class="button-primary">Başla</button>
         </div>
@@ -38,7 +38,7 @@
                 <form id="urun-ekle-form">
                     <input type="text" id="urun-adi" placeholder="Ürün Adı" required>
                     <div class="form-row">
-                        <input type="number" id="urun-miktari" placeholder="Miktar" step="0.001" required> <!-- Küsüratlı giriş için 'step' eklendi -->
+                        <input type="number" id="urun-miktari" placeholder="Miktar" step="0.001" required>
                         <select id="urun-birimi" required>
                             <option value="ADET">ADET</option>
                             <option value="KG">KG</option>
