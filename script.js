@@ -73,13 +73,13 @@ db.collection('sayim-urunleri').orderBy('zaman', 'desc')
           const tr = document.createElement('tr');
           const zamanStr = veri.zaman ? veri.zaman.toDate().toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '...';
           
-          // Mobil uyumlu tablo için data-label'lar ekliyoruz
-          tr.innerHTML = `
-              <td data-label="Ürün">${veri.ad}</td>
-              <td data-label="Miktar" data-unit="${veri.birim}">${veri.miktar}</td>
-              <td data-label="Sayan">${veri.sayan}</td>
-              <td data-label="Zaman">${zamanStr}</td>
-          `;
+        // GÜNCEL HALİ
+        tr.innerHTML = `
+            <td data-label="Ürün">${veri.ad}</td>
+            <td data-label="Miktar">${veri.miktar} ${veri.birim}</td> <!-- DEĞİŞİKLİK BURADA! -->
+            <td data-label="Sayan">${veri.sayan}</td>
+            <td data-label="Zaman">${zamanStr}</td>
+`        ;
           urunTablosuBody.appendChild(tr);
       });
   }, error => {
