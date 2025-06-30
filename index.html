@@ -2,57 +2,86 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Online Sayım Sistemi</title>
+    
+    <!-- PWA için Gerekli Ayarlar -->
+    <meta name="theme-color" content="#2a3a4a"/>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-192x192.png"> <!-- İkon dosyanızın yolu -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Sayım Yapan Kişinin Adını Girmesi İçin Kutu (Başlangıçta Sadece Bu Görünecek) -->
-    <div id="kullanici-giris-kutusu">
-        <h2>Sayıma Başlamadan Önce</h2>
-        <input type="text" id="sayim-yapan-input" placeholder="Adınızı Giriniz (Örn: Emre K.)">
-        <button id="sayima-basla-btn">Sayıma Başla</button>
+    <div id="app-container">
+        <!-- Sayım Yapan Kişinin Adını Girmesi İçin Kutu -->
+        <div id="kullanici-giris-kutusu" class="card">
+            <h2>Sayıma Başla</h2>
+            <p>Sayıma başlamadan önce adınızı veya takımınızı girin.</p>
+            <input type="text" id="sayim-yapan-input" placeholder="Adınız (Örn: Emre K.)">
+            <button id="sayima-basla-btn" class="button-primary">Başla</button>
+        </div>
+
+        <!-- Ana Sayım Ekranı -->
+        <main id="sayim-alani" class="gizli">
+            <header>
+                <h1>Market Sayım Paneli</h1>
+                <p>SAYIM YAPAN: <b id="aktif-kullanici-adi"></b></p>
+            </header>
+            
+            <div class="card">
+                <form id="urun-ekle-form">
+                    <input type="text" id="urun-adi" placeholder="Ürün Adı" required>
+                    <div class="form-row">
+                        <input type="number" id="urun-miktari" placeholder="Miktar" step="0.001" required> <!-- Küsüratlı giriş için 'step' eklendi -->
+                        <select id="urun-birimi" required>
+                            <option value="ADET">ADET</option>
+                            <option value="KG">KG</option>
+                            <option value="Litre">Litre</option>
+                            <option value="Paket">Paket</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="button-primary">Ekle</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Sayılan Ürünler</h2>
+                <div class="table-wrapper">
+                    <table id="urun-tablosu">
+                        <thead>
+                            <tr>
+                                <th>Ürün</th>
+                                <th>Miktar</th>
+                                <th>Sayan</th>
+                                <th>Zaman</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Veriler buraya anlık olarak gelecek -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="danger-zone" class="card">
+                <h3>Tehlikeli Alan</h3>
+                <button id="reset-data-btn" class="button-danger">TÜM VERİYİ SIFIRLA</button>
+            </div>
+        </main>
     </div>
 
-    <!-- Ana Sayım Ekranı (Başlangıçta Gizli) -->
-    <div id="sayim-alani" class="gizli">
-        <h1>Market Sayım Paneli</h1>
-        <p>SAYIM YAPAN: <b id="aktif-kullanici-adi"></b></p>
-        
-        <form id="urun-ekle-form">
-            <input type="text" id="urun-adi" placeholder="Ürün Adı" required>
-            <select id="urun-birimi" required>
-                <option value="ADET">ADET</option>
-                <option value="KG">KG</option>
-            </select>
-            <input type="number" id="urun-miktari" placeholder="Miktar" required>
-            <button type="submit">Ekle</button>
-        </form>
-
-        <hr>
-        <h2>Sayılan Ürünler</h2>
-        <table id="urun-tablosu">
-            <thead>
-                <tr>
-                    <th>Ürün Adı</th>
-                    <th>Miktar</th>
-                    <th>Birim</th>
-                    <th>Sayan Kişi</th>
-                    <th>Zaman</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Veriler buraya anlık olarak gelecek -->
-            </tbody>
-        </table>
-    </div>
-
-<!-- BUNLARI KULLANIN -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- Firebase Kütüphaneleri -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-<!-- Kendi JavaScript Dosyamız -->
-<script src="script.js"></script>
+    <!-- Kendi JavaScript Dosyamız -->
+    <script src="script.js"></script>
 
 </body>
 </html>
