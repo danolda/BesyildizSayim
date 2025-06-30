@@ -12,7 +12,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Adım 3: PWA için Service Worker'ı kaydet
+// PWA için Service Worker'ı kaydet
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -65,6 +65,7 @@ urunEkleForm.addEventListener('submit', (e) => {
     });
 });
 
+// Veritabanını dinle ve tabloyu oluştur
 db.collection('sayim-urunleri').orderBy('zaman', 'desc')
   .onSnapshot(snapshot => {
       urunTablosuBody.innerHTML = '';
@@ -73,36 +74,30 @@ db.collection('sayim-urunleri').orderBy('zaman', 'desc')
           const tr = document.createElement('tr');
           const zamanStr = veri.zaman ? veri.zaman.toDate().toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '...';
           
-        // GÜNCEL HALİ
-        tr.innerHTML = `
-            <td data-label="Ürün">${veri.ad}</td>
-            <td data-label="Miktar">${veri.miktar} ${veri.birim}</td> <!-- DEĞİŞİKLİK BURADA! -->
-            <td data-label="Sayan">${veri.sayan}</td>
-            <td data-label="Zaman">${zamanStr}</td>
-`        ;
+          // GÜNCELLENMİŞ SATIRLAR: Miktar ve Birim birleştirildi.
+          tr.innerHTML = `
+              <td data-label="Ürün">${veri.ad}</td>
+              <td data-label="Miktar">${veri.miktar} ${veri.birim}</td>
+              <td data-label="Sayan">${veri.sayan}</td>
+              <td data-label="Zaman">${zamanStr}</td>
+          `;
           urunTablosuBody.appendChild(tr);
       });
   }, error => {
       console.error("Veri dinleme hatası: ", error);
   });
 
-// YENİ: Veri Sıfırlama Fonksiyonu
-// YENİ: ŞİFRE KORUMALI Veri Sıfırlama Fonksiyonu
+// ŞİFRE KORUMALI Veri Sıfırlama Fonksiyonu
 resetButton.addEventListener('click', () => {
-    // ŞİFREYİ BURADAN DEĞİŞTİREBİLİRSİNİZ
     const dogruSifre = 'Besyildiz5'; 
-
     const girilenSifre = prompt("TÜM verileri silmek için lütfen yönetici şifresini girin:");
 
-    // Eğer kullanıcı 'İptal' butonuna basarsa veya bir şey girmezse, işlemi durdur.
     if (girilenSifre === null) {
         alert('İşlem iptal edildi.');
         return;
     }
 
-    // Girilen şifre doğruysa silme işlemine başla
     if (girilenSifre === dogruSifre) {
-        // Ekstra onay alalım, ne olur ne olmaz.
         const sonOnay = confirm("Şifre doğru. TÜM veriler kalıcı olarak silinecektir. Emin misiniz?");
         if (sonOnay) {
             alert('Veriler siliniyor...');
@@ -118,13 +113,12 @@ resetButton.addEventListener('click', () => {
                 alert('Tüm veriler başarıyla silindi.');
             }).catch(error => {
                 console.error('Silme işlemi sırasında hata: ', error);
-                alert('Bir hata oluştu. Lütfen Firestore güvenlik kurallarınızı kontrol edin. Silme işlemine izin vermeniz gerekebilir.');
+                alert('Bir hata oluştu. Lütfen Firestore güvenlik kurallarınızı kontrol edin.');
             });
         } else {
              alert('Son onay verilmediği için işlem iptal edildi.');
         }
     } else {
-        // Şifre yanlışsa uyarı ver
         alert('Yanlış şifre! İşlem iptal edildi.');
     }
 });
