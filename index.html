@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Sayım Sistemi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Sayım Yapan Kişinin Adını Girmesi İçin Kutu (Başlangıçta Sadece Bu Görünecek) -->
+    <div id="kullanici-giris-kutusu">
+        <h2>Sayıma Başlamadan Önce</h2>
+        <input type="text" id="sayim-yapan-input" placeholder="Adınızı Giriniz (Örn: Emre K.)">
+        <button id="sayima-basla-btn">Sayıma Başla</button>
+    </div>
+
+    <!-- Ana Sayım Ekranı (Başlangıçta Gizli) -->
+    <div id="sayim-alani" class="gizli">
+        <h1>Market Sayım Paneli</h1>
+        <p>SAYIM YAPAN: <b id="aktif-kullanici-adi"></b></p>
+        
+        <form id="urun-ekle-form">
+            <input type="text" id="urun-adi" placeholder="Ürün Adı" required>
+            <select id="urun-birimi" required>
+                <option value="ADET">ADET</option>
+                <option value="KG">KG</option>
+            </select>
+            <input type="number" id="urun-miktari" placeholder="Miktar" required>
+            <button type="submit">Ekle</button>
+        </form>
+
+        <hr>
+        <h2>Sayılan Ürünler</h2>
+        <table id="urun-tablosu">
+            <thead>
+                <tr>
+                    <th>Ürün Adı</th>
+                    <th>Miktar</th>
+                    <th>Birim</th>
+                    <th>Sayan Kişi</th>
+                    <th>Zaman</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Veriler buraya anlık olarak gelecek -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Firebase Kütüphanelerini Ekliyoruz -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Kendi JavaScript Dosyamız -->
+    <script src="script.js"></script>
+
+</body>
+</html>
