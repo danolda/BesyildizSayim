@@ -164,3 +164,12 @@ tbody tr:hover {
         /* Gerekirse display: none; yapılabilir ama şimdilik kalsın */
     }
 }
+
+/* EN ALTTAKİ YENİ FOOTER STİLİ */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #888;
+}
