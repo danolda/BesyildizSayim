@@ -1,3 +1,5 @@
+// NİHAİ SCRIPT.JS KODU
+
 // Adım 1: Firebase Yapılandırmanız (Değiştirmeyin)
 const firebaseConfig = {
     apiKey: "AIzaSyCy2-UOqSLgt6HJYIHCY49cP9zLGcWFePs",
@@ -74,7 +76,8 @@ db.collection('sayim-urunleri').orderBy('zaman', 'desc')
           const tr = document.createElement('tr');
           const zamanStr = veri.zaman ? veri.zaman.toDate().toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '...';
           
-          // GÜNCELLENMİŞ SATIRLAR: Miktar ve Birim birleştirildi.
+          // *** SORUNUN ÇÖZÜMÜ OLAN SATIRLAR BURASI ***
+          // Miktar ve Birim'i birleştiriyoruz.
           tr.innerHTML = `
               <td data-label="Ürün">${veri.ad}</td>
               <td data-label="Miktar">${veri.miktar} ${veri.birim}</td>
