@@ -87,25 +87,44 @@ db.collection('sayim-urunleri').orderBy('zaman', 'desc')
   });
 
 // YENİ: Veri Sıfırlama Fonksiyonu
+// YENİ: ŞİFRE KORUMALI Veri Sıfırlama Fonksiyonu
 resetButton.addEventListener('click', () => {
-    const confirmation = prompt("TÜM verileri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz. Onaylamak için 'SİL' yazın.");
-    if (confirmation === 'SİL') {
-        alert('Veriler siliniyor...');
-        const collectionRef = db.collection('sayim-urunleri');
-        
-        collectionRef.get().then(snapshot => {
-            const batch = db.batch();
-            snapshot.docs.forEach(doc => {
-                batch.delete(doc.ref);
-            });
-            return batch.commit();
-        }).then(() => {
-            alert('Tüm veriler başarıyla silindi.');
-        }).catch(error => {
-            console.error('Silme işlemi sırasında hata: ', error);
-            alert('Bir hata oluştu. Lütfen Firestore güvenlik kurallarınızı kontrol edin. Silme işlemine izin vermeniz gerekebilir.');
-        });
-    } else {
+    // ŞİFREYİ BURADAN DEĞİŞTİREBİLİRSİNİZ
+    const dogruSifre = 'Besyildiz5'; 
+
+    const girilenSifre = prompt("TÜM verileri silmek için lütfen yönetici şifresini girin:");
+
+    // Eğer kullanıcı 'İptal' butonuna basarsa veya bir şey girmezse, işlemi durdur.
+    if (girilenSifre === null) {
         alert('İşlem iptal edildi.');
+        return;
+    }
+
+    // Girilen şifre doğruysa silme işlemine başla
+    if (girilenSifre === dogruSifre) {
+        // Ekstra onay alalım, ne olur ne olmaz.
+        const sonOnay = confirm("Şifre doğru. TÜM veriler kalıcı olarak silinecektir. Emin misiniz?");
+        if (sonOnay) {
+            alert('Veriler siliniyor...');
+            const collectionRef = db.collection('sayim-urunleri');
+            
+            collectionRef.get().then(snapshot => {
+                const batch = db.batch();
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                return batch.commit();
+            }).then(() => {
+                alert('Tüm veriler başarıyla silindi.');
+            }).catch(error => {
+                console.error('Silme işlemi sırasında hata: ', error);
+                alert('Bir hata oluştu. Lütfen Firestore güvenlik kurallarınızı kontrol edin. Silme işlemine izin vermeniz gerekebilir.');
+            });
+        } else {
+             alert('Son onay verilmediği için işlem iptal edildi.');
+        }
+    } else {
+        // Şifre yanlışsa uyarı ver
+        alert('Yanlış şifre! İşlem iptal edildi.');
     }
 });
